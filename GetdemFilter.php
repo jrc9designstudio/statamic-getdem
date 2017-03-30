@@ -14,37 +14,52 @@ class GetdemFilter extends Filter
      */
     public function filter()
     {
-        return $this->collection->filter(function($entry) {
-          if(count($_GET)) {
-            $params = explode('|', $this->get('params', ''));
-            $addative = ($this->get('and', 'true') == 'true') ? true : false;
-            $return_arry = [];
+        return $this->collection->filter( function( $entry ) {
+
+        	// get parameters from the tag
+            $params = explode( '|', $this->get('params', '' ) );
+
+            // match all the params (`and` mode), or just some (`or` mode)
+            // tag usage: {{ ... match="all" }}
+            $mode = $this->get('match', 'any'); //default to any (`or` mode)
+
+            // use this to return a 
+            $return_array = [];
+
+            // if nothing is passed then no need to filter - so return true for all entries
+            if( ! count $params ) {
+            	return true;
+            }
             
-            foreach ($params as $param)
+            // check for all supplied taxonomies, to see if this entry contains it
+            foreach ( $params as $param )
             {
-              $value = Request::get($param, false);
-              $taxonomy = $entry->get($param);
-              if ($value != '' && $taxonomy != null && !empty($taxonomy))
+              // get the taxonomy value from the $_GET paramaters
+              $value = Request::get( $param, false );
+
+              // JRC - I am hazy on what this is doing, this will try and get i.e. `services` from the entry, what does this return?
+              $taxonomy = $entry->get( $param );
+
+              // if something has been set, not sure on the last two - see above...
+              if ( $value != '' && $taxonomy != null && ! empty( $taxonomy ) )
               {
-                $return_arry[] = in_array($value, $taxonomy);
+                // JRC - not sure what this does?
+                $return_array[] = in_array( $value, $taxonomy );
               }
             }
             
-            if ($addative && in_array(false, $return_arry))
+            // JRC - also not sure on what is happening here
+            if ( $mode === 'all' && in_array( false, $return_array ) )
             {
               return false;
             }
-            else if (in_array(true, $return_arry))
+            else if ( in_array( true, $return_array ) )
             {
               return true;
             }
             
             return false;
-          }
-          else
-          {
-            return true;
-          }
+
         });
     }
 }

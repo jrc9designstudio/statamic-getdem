@@ -16,7 +16,7 @@ class GetdemFilter extends Filter
     {
         return $this->collection->filter(function($entry) {
           $params = explode('|', $this->get('params', ''));
-          $addative = $this->get('and', true);
+          $addative = ($this->get('and', 'true') == 'true') ? true : false;
           $return_arry = [];
           
           foreach ($params as $param)
@@ -38,7 +38,7 @@ class GetdemFilter extends Filter
             return true;
           }
           
-          return true;
+          return false;
         });
     }
 }

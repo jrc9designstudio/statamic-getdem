@@ -15,30 +15,36 @@ class GetdemFilter extends Filter
     public function filter()
     {
         return $this->collection->filter(function($entry) {
-          $params = explode('|', $this->get('params', ''));
-          $addative = ($this->get('and', 'true') == 'true') ? true : false;
-          $return_arry = [];
-          
-          foreach ($params as $param)
-          {
-            $value = Request::get($param, false);
-            $taxonomy = $entry->get($param);
-            if ($value != '' && $taxonomy != null && !empty($taxonomy))
+          if(count($_GET)) {
+            $params = explode('|', $this->get('params', ''));
+            $addative = ($this->get('and', 'true') == 'true') ? true : false;
+            $return_arry = [];
+            
+            foreach ($params as $param)
             {
-              $return_arry[] = in_array($value, $taxonomy);
+              $value = Request::get($param, false);
+              $taxonomy = $entry->get($param);
+              if ($value != '' && $taxonomy != null && !empty($taxonomy))
+              {
+                $return_arry[] = in_array($value, $taxonomy);
+              }
             }
-          }
-          
-          if ($addative && in_array(false, $return_arry))
-          {
+            
+            if ($addative && in_array(false, $return_arry))
+            {
+              return false;
+            }
+            else if (in_array(true, $return_arry))
+            {
+              return true;
+            }
+            
             return false;
           }
-          else if (in_array(true, $return_arry))
+          else
           {
             return true;
           }
-          
-          return false;
         });
     }
 }

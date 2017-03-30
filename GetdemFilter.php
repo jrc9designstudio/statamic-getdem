@@ -16,14 +16,14 @@ class GetdemFilter extends Filter
     {
         return $this->collection->filter( function( $entry ) {
 
-        	// get parameters from the tag
+            // get parameters from the tag
             $params = explode( '|', $this->get('params', '' ) );
 
             // match all the params (`and` mode), or just some (`or` mode)
             // tag usage: {{ ... match="all" }}
             $mode = $this->get('match', 'any'); //default to any (`or` mode)
 
-            // use this to return a 
+            // JRC - hazy on what this does
             $return_array = [];
 
             // if nothing is passed then no need to filter - so return true for all entries

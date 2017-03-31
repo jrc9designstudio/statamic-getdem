@@ -16,30 +16,37 @@ class GetdemFilter extends Filter
     {
         return $this->collection->filter( function( $entry ) {
 
-            // get parameters from the tag
-            $params = explode( '|', $this->get('params', '' ) );
+          // get parameters to check from the tag
+          $params_to_check = explode( '|', $this->get('params', '' ) );
 
-            // match all the params (`and` mode), or just some (`or` mode)
-            // tag usage: {{ ... match="all" }}
-            $mode = $this->get('match', 'any'); //default to any (`or` mode)
+          // match all the params (`and` mode), or just some (`or` mode)
+          // tag usage: {{ ... match="all" }}
+          $mode = $this->get('match', 'any'); //default to any (`or` mode)
 
-            // JRC - hazy on what this does
-            // This creates an empty array that I use to store true or false on the match for each param
-            $return_array = [];
+          // JRC - hazy on what this does
+          // This creates an empty array that I use to store true or false on the match for each param
+          $return_array = [];
 
-            // if nothing is passed then no need to filter - so return true for all entries
-            // This is cool!
-            if( ! count($params) )
+          // if nothing is passed then no need to filter - so return true for all entries
+          // This is pretty pointless because why would you use filter="getdem" if you are not even going to filter
+          if( ! count($params_to_check) )
+          {
+          	return true;
+          }
+          
+          // check for all supplied taxonomies, to see if this entry contains it
+          foreach ( $params_to_check as $param )
+          {
+            // get the taxonomy value from the $_GET paramaters
+            $value = Request::get( $param, false );
+
+            // This paramater does not exist in the url params we skip over filtering it
+            if ( ! $value )
             {
-            	return true;
+              $return_array[] = true;
             }
-            
-            // check for all supplied taxonomies, to see if this entry contains it
-            foreach ( $params as $param )
+            else
             {
-              // get the taxonomy value from the $_GET paramaters
-              $value = Request::get( $param, false );
-
               // JRC - I am hazy on what this is doing, this will try and get i.e. `services` from the entry, what does this return?
               // This gets the array of taxonomies from the entry, may not be nessicary? This is used to do the comparison
               $taxonomy = $entry->get( $param );
@@ -54,23 +61,24 @@ class GetdemFilter extends Filter
                 // It adds it's result (true or false) to our return array.
                 $return_array[] = in_array( $value, $taxonomy );
               }
-            }
-            
-            // JRC - also not sure on what is happening here
-            // So if we want all terms to match our array should now contain [true, true, true] (if we are matching three terms)
-            // In other words we are making sure there are no mismatched terms [true, false, true] for example
-            if ( $mode === 'all' && in_array( false, $return_array ) )
-            {
-              return false;
-            }
-            // Here we are checking to see if any of ther terms evaluated to be true
-            // [true, false, true]
-            else if ( in_array( true, $return_array ) )
-            {
-              return true;
-            }
-            
+          }
+          }
+          
+          // JRC - also not sure on what is happening here
+          // So if we want all terms to match our array should now contain [true, true, true] (if we are matching three terms)
+          // In other words we are making sure there are no mismatched terms [true, false, true] for example
+          if ( $mode === 'all' && in_array( false, $return_array ) )
+          {
             return false;
+          }
+          // Here we are checking to see if any of ther terms evaluated to be true
+          // [true, false, true]
+          else if ( in_array( true, $return_array ) )
+          {
+            return true;
+          }
+          
+          return false;
 
         });
     }

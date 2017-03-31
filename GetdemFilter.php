@@ -23,13 +23,11 @@ class GetdemFilter extends Filter
           // tag usage: {{ ... match="all" }}
           $mode = $this->get('match', 'any'); //default to any (`or` mode)
 
-          // JRC - hazy on what this does
-          // This creates an empty array that I use to store true or false on the match for each param
+          // This creates an empty array used to store true or false on the match for each parameter
           $return_array = [];
 
-          // if nothing is passed then no need to filter - so return true for all entries
-          // This is pretty pointless because why would you use filter="getdem" if you are not even going to filter
-          if( ! count($params_to_check) )
+          // if no parameters are set in the $_GET data, then no need to filter - so return true for all entries
+          if( ! count( array_intersect( $_GET, $params_to_check ) ) )
           {
           	return true;
           }
@@ -47,33 +45,29 @@ class GetdemFilter extends Filter
             }
             else
             {
-              // JRC - I am hazy on what this is doing, this will try and get i.e. `services` from the entry, what does this return?
-              // This gets the array of taxonomies from the entry, may not be nessicary? This is used to do the comparison
+              // This gets the array of taxonomies from the entry, this is used to do the comparison
               // It returns an array of taxonomy terms on the entry (slugs) IE: ['coffee', 'harry-potter']
-              $taxonomy = $entry->get( $param_name );
+              $taxonomies_array = $entry->get( $param_name );
 
               // if something has been set, not sure on the last two - see above...
               // If the taxonomy field we are searching on is not valid or if the entry has no terms for that taxonomy field
               // For example we may get null or we may get an empty array []
-              if ( $value != '' && $taxonomy != null && ! empty( $taxonomy ) )
+              if ( $value != '' && $taxonomies_array != null && ! count( $taxonomies_array ) )
               {
-                // JRC - not sure what this does?
                 // This checks to see if the $value (text of the passed param) is in the array of taxonmy terms on the entry
-                // It adds it's result (true or false) to our return array.
-                $return_array[] = in_array( $value, $taxonomy );
+                // It adds its result (true or false) to the return array.
+                $return_array[] = in_array( $value, $taxonomies_array );
               }
           }
           }
           
-          // JRC - also not sure on what is happening here
-          // So if we want all terms to match our array should now contain [true, true, true] (if we are matching three terms)
+          // If we want all terms to match, our array should now *only* contain [true, true, true] (if we are matching three terms)
           // In other words we are making sure there are no mismatched terms [true, false, true] for example
           if ( $mode === 'all' && in_array( false, $return_array ) )
           {
             return false;
           }
-          // Here we are checking to see if any of ther terms evaluated to be true
-          // [true, false, true]
+          // Here we are checking to see if *any* of the terms evaluated to be true, e.g. [true, false, true]
           else if ( in_array( true, $return_array ) )
           {
             return true;

@@ -35,10 +35,10 @@ class GetdemFilter extends Filter
           }
           
           // check for all supplied taxonomies, to see if this entry contains it
-          foreach ( $params_to_check as $param )
+          foreach ( $params_to_check as $param_name )
           {
             // get the taxonomy value from the $_GET paramaters
-            $value = Request::get( $param, false );
+            $value = Request::get( $param_name, false );
 
             // This paramater does not exist in the url params we skip over filtering it
             if ( ! $value )
@@ -49,7 +49,8 @@ class GetdemFilter extends Filter
             {
               // JRC - I am hazy on what this is doing, this will try and get i.e. `services` from the entry, what does this return?
               // This gets the array of taxonomies from the entry, may not be nessicary? This is used to do the comparison
-              $taxonomy = $entry->get( $param );
+              // It returns an array of taxonomy terms on the entry (slugs) IE: ['coffee', 'harry-potter']
+              $taxonomy = $entry->get( $param_name );
 
               // if something has been set, not sure on the last two - see above...
               // If the taxonomy field we are searching on is not valid or if the entry has no terms for that taxonomy field

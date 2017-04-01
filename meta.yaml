@@ -1,5 +1,5 @@
 name: Getdem
-version: 0.0.1
-description: A filter to let you filter collections by mutiple get params
+version: 1.0.0
+description: A filter to let you filter collections by mutiple taxonomies as get params
 url: https://github.com/jrc9designstudio/statamic-getdem
 developer: JRC9 Design Studio & Danny Richardson

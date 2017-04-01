@@ -1,11 +1,10 @@
 # Getdem (get dem dere entries wid all dos taxonomies)
 
-*Requirement:* Statamic v2.x
+*Requirement:* Statamic v2.x  
 *Version:* 1.0.0
 
 ## What is Getdem?
-
-Lets you filter collections by multiple taxonomies as get params that may or may not exist.
+Lets you filter collection entries by multiple taxonomies as get params that may or may not exist.
 
 ## Installation
 Rename the folder GoogleAnalytics and copy it to your site/addons folder

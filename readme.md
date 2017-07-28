@@ -7,7 +7,7 @@
 Lets you filter collection entries by multiple taxonomies as get params that may or may not exist.
 
 ## Installation
-Rename the folder GoogleAnalytics and copy it to your site/addons folder
+Rename the folder Getdem and copy it to your site/addons folder
 
 ## URL format
 ```
